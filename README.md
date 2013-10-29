@@ -9,50 +9,71 @@ Tracer Bullet is also a private investigator, an alter ego of Calvin in the comi
 
 -----------------------
 
-The *Tracer Bullets* gem makes studying the performance of your Rails app from its development log file a lot easier.
+The *Tracer Bullets* gem makes studying the performance of your Rails or Rack app from its development log file a lot easier.
 
 
 ## Background
 
-Performance tuning a Rails app is still pretty damn hard. There are great tools out there like New Relic, and even Rails own performance tests, but still, I find areas where I'm tearing my hair out looking for slow bits. 
+Performance tuning a Rails app is still pretty damn hard. There are great tools out there like New Relic, and even Rails own performance tests, but still, I find areas where I'm tearing my hair out looking for slow bits.
 
-On the Obama re-election campaign, I did a ton of performance engineering, and the tool that helped me out the most was simply something I built to add "tracer bullets" to my code. These bullets were just method calls to log the current location of the program and how much time had elapsed since the last time it was called. 
+On the Obama re-election campaign, I did a ton of performance engineering, and the tool that helped me out the most was simply something I built to add "tracer bullets" to my code. These bullets were just method calls to log the current location of the program and how much time had elapsed since the last time it was called.
 
-I keep finding myself reinventing this same type of performance logging tool to solve performance bottlenecks in things I work on today, like **[Draft](http://draftin.com) (an app to help people [write better](http://draftin.com))** 
- 
+I keep finding myself reinventing this same type of performance logging tool to solve performance bottlenecks in things I work on today, like **[Draft](http://draftin.com) (an app to help people [write better](http://draftin.com))**
+
 So here's a really simple version I made for everyone to use. It gives you a method to call:
 
 ```ruby
 tracer_bullet
 ```
 
-in your controllers and views. When you request an action from your Rails app, that method will log the elapsed time since the last time it was called as well as its location in your controller or view. 
+in your controllers and views. When you request an action from your Rails app, that method will log the elapsed time since the last time it was called as well as its location in your controller or view.
 
 As you intermix them with your code, you'll notice it becomes a lot easier to narrow your focus on the slow parts of the request.
 
 ## Syntax
 
-In a controller, just call the method:  
+In a controller, just call the method:
 
 ```ruby
 tracer_bullet
 ```
 
-In a view, call it with: 
+In a view, call it with:
 
 ```erb
 <%= tracer_bullet %>
 ```
 
-To save keystrokes, you can also use the alias: 
+To save keystrokes, you can also use the alias:
 
 ```ruby
 tb
 ```
 
+To use with Rack specifically, ensure you tell it to use the `TracerBullets::Middleware` class. Then the `tracer_bullet` or `tb` methods should be accessible in your Rack app:
+
+```ruby
+# dummy_rack_app.rb
+require "./lib/tracer_bullets"
+
+class DummyRackApp
+  def call(env)
+    tracer_bullet
+    [200, {'Content-Type' => 'text/plain'}, ["Hello world!"]]
+  end
+end
+
+# config.ru
+require "tracer_bullets/middleware"
+require "./dummy_rack_app"
+
+use TracerBullets::Middleware
+run DummyRackApp.new
+```
+
 ## Example Log
 
-The output of your development.log file will look like: 
+The output of your development.log file will look like:
 
 ```
 Elapsed: 4.505ms /Users/nate/git/afternoon/app/views/documents/edit.html.erb:482
@@ -62,9 +83,9 @@ Elapsed: 4.505ms /Users/nate/git/afternoon/app/views/documents/edit.html.erb:482
 Elapsed: 7.096ms /Users/nate/git/afternoon/app/views/documents/edit.html.erb:539
 ```
 
-Letting you know that between line 482 of my edit.html.erb file and line 539, 7ms had passed. That isn't my slow section. 
+Letting you know that between line 482 of my edit.html.erb file and line 539, 7ms had passed. That isn't my slow section.
 
-Now if it was obviously a lot slower like 200ms, I might take a good look at what's happening in that block of code. 
+Now if it was obviously a lot slower like 200ms, I might take a good look at what's happening in that block of code.
 
 ## Development Only
 
@@ -74,11 +95,11 @@ These traces only run in Development mode. So you can leave them in your code if
 Installation
 ------------
 
-1) Add 'tracer_bullets' to your Gemfile. Probably best to just add it to your development group: 
+1) Add 'tracer_bullets' to your Gemfile. Probably best to just add it to your development group:
 
 ```
-group :development do 
-gem 'tracer_bullets'
+group :development do
+  gem 'tracer_bullets'
 end
 ```
 
@@ -103,4 +124,4 @@ Feedback
 
 -----------
 
-P.S. [**I'd love to meet you on Twitter: here**](http://twitter.com/natekontny). 
+P.S. [**I'd love to meet you on Twitter: here**](http://twitter.com/natekontny).
