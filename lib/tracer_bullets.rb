@@ -17,6 +17,8 @@ module TracerBullets
         @tracer_bullet_start_time = Time.now
       end
     end
+    alias_method :tb, :tracer_bullet
+
   end
 end
 
