@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = TracerBullets::VERSION
   spec.authors       = ["nate"]
   spec.email         = ["nate@cityposh.com"]
-  spec.description   = %q{A simple way to see time expiration in your Rails log files}
-  spec.summary       = %q{A simple way to see time expiration in your Rails log files}
+  spec.description   = %q{A simple way to see time expiration in your Rails/Rack log files}
+  spec.summary       = %q{A simple way to see time expiration in your Rails/Rack log files}
   spec.homepage      = ""
   spec.license       = "MIT"
 
